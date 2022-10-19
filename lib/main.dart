@@ -2,19 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
 }
-
-// final dummySnapshot = [
-//   {"name": "Filip", "votes": 15},
-//   {"name": "Abraham", "votes": 14},
-//   {"name": "Richard", "votes": 11},
-//   {"name": "Ike", "votes": 10},
-//   {"name": "Justin", "votes": 1},
-// ];
 
 class MyApp extends StatelessWidget {
   @override
@@ -37,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Baby Name Votes')),
+      appBar: AppBar(title: Text('Map')),
       body: _buildBody(context),
     );
   }
@@ -45,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildBody(BuildContext context) {
     // return _buildList(context, dummySnapshot);
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('baby').snapshots(), // babyは各々のコレクションIDに変更してください
+      stream: FirebaseFirestore.instance.collection('toire').snapshots(), // babyは各々のコレクションIDに変更してください
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
@@ -54,7 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Widget _buildList(BuildContext context, List<Map> snapshot) {
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
       padding: const EdgeInsets.only(top: 20.0),
@@ -62,9 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // Widget _buildListItem(BuildContext context, Map data) {
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    // final record = Record.fromMap(data as Map<String, dynamic>);
     final record = Record.fromSnapshot(data);
 
     return Padding(
@@ -77,9 +67,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         child: ListTile(
           title: Text(record.name),
-          trailing: Text(record.votes.toString()),
-          // onTap: () => print(record),
-          onTap: () => record.reference.update({'votes': FieldValue.increment(1)}),
+          subtitle: Text(record.ido.toString(),),
+          trailing: Text(record.keido.toString(),),
+
+
+          //onTap: () => record.reference.update({'votes': FieldValue.increment(1)}),
         ),
       ),
     );
@@ -88,24 +80,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Record {
   final String name;
-  final int votes;
+  final double ido;
+  final double keido;
+
   final DocumentReference reference;
 
-  // Record.fromMap(Map<String, dynamic> map)
-  //     : assert(map['name'] != null),
-  //       assert(map['votes'] != null),
-  //       name = map['name'],
-  //       votes = map['votes'];
 
   Record.fromMap(Map<String, dynamic> map, {required this.reference})
       : assert(map['name'] != null),
-        assert(map['votes'] != null),
+        assert(map['ido'] != null),
+        assert(map['keido'] != null),
+  //assert(map['idokeido'] != null),
         name = map['name'],
-        votes = map['votes'];
-
+        ido = map['ido'],
+        keido = map['keido'];
+  // idokeido = map['idokeido'];
   Record.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data() as Map<String, dynamic>, reference: snapshot.reference);
 
   @override
-  String toString() => "Record<$name:$votes>";
+  String toString() => "Record<$name:$ido:$keido>";
 }
