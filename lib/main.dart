@@ -31,7 +31,10 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  //State<MyHomePage> createState() => _MyHomePageState();
+  _MyHomePageState createState() {
+    return _MyHomePageState();
+  }
 }
 
 
@@ -102,7 +105,6 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-
             GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: _initialPosition,
@@ -115,7 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 print('Clicked: $latLang');
               },
               myLocationEnabled: true,
-
             ),
             //buildFloatingSearchBar(),
           ],
@@ -140,16 +141,32 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
       padding: const EdgeInsets.only(top: 20.0),
-      //children: snapshot.map((data) => _buildListMap(context, data)).toList(),
-      //children: snapshot.map((data) => _buildListMap(context, data)).toList(),
+      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
     );
   }
 
-//Widget build(BuildContext context, DocumentSnapshot data) {
-// Widget _buildListMap(BuildContext context, DocumentSnapshot data) {
-//   final record = Record.fromSnapshot(data);
-//   //       );
-// }
+  Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
+    final record = Record.fromSnapshot(data);
+
+    return Padding(
+      key: ValueKey(record.name),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        child: ListTile(
+          title: Text(record.name),
+          subtitle: Text(record.ido.toString(),),
+          trailing: Text(record.keido.toString(),),
+
+
+          //onTap: () => record.reference.update({'votes': FieldValue.increment(1)}),
+        ),
+      ),
+    );
+  }
 }
 class Record {
   final String name;
